@@ -85,6 +85,11 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* Ensure hidden attribute works even when CSS overrides display */
+    [hidden] {
+      display: none !important;
+    }
+
     html {
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
@@ -789,7 +794,7 @@
         var parts = location.pathname.split('/').filter(function(p) { return p; });
         if (host.indexOf('.github.io') !== -1 && parts.length > 0) {
           var last = parts[parts.length - 1];
-          var isFile = /[\.\-][a-z0-9]+$/i.test(last);
+          var isFile = /\.[a-z0-9]{1,8}$/i.test(last);
           var dirParts = isFile ? parts.slice(1, -1) : parts.slice(1);
           return dirParts.join('/');
         }
@@ -843,29 +848,44 @@
       }
 
       function loadFiles() {
+        var target = detectRepo();
+
+        // If repo can't be detected and no fallback, show helpful error
+        if (!target && (!CONFIG.fallbackFiles || CONFIG.fallbackFiles.length === 0)) {
+          skeleton.hidden = true;
+          errorState.innerHTML = '<strong>Настройте репозиторий.</strong> Добавьте owner/repo в CONFIG в JavaScript или используйте домен *.github.io. Файл: index.html, строка ~760.';
+          errorState.hidden = false;
+          fileCount.textContent = '0 курсов';
+          return;
+        }
+
         fetchFilesFromGitHub()
           .then(function(remote) {
             if (remote) {
               visibleFiles = normalizeFiles(remote);
+              if (visibleFiles.length === 0) {
+                skeleton.hidden = true;
+                emptyState.hidden = false;
+                fileCount.textContent = '0 курсов';
+              } else {
+                renderFiles();
+              }
+            } else if (CONFIG.fallbackFiles && CONFIG.fallbackFiles.length) {
+              visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
               renderFiles();
             } else {
-              // Fallback files or error
-              if (CONFIG.fallbackFiles && CONFIG.fallbackFiles.length) {
-                visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
-                renderFiles();
-              } else {
-                showLoadingError();
-              }
+              showLoadingError('Не удалось получить список файлов. Проверьте интернет или настройки CORS.');
             }
           })
           .catch(function(err) {
             console.error('loadFiles failed:', err);
-            showLoadingError();
+            showLoadingError('Ошибка: ' + (err && err.message ? err.message : 'неизвестная ошибка'));
           });
       }
 
-      function showLoadingError() {
+      function showLoadingError(msg) {
         skeleton.hidden = true;
+        errorState.innerHTML = msg || 'Не удалось загрузить список курсов. Проверьте подключение к интернету.';
         errorState.hidden = false;
         fileCount.textContent = '0 курсов';
       }
