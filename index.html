@@ -435,22 +435,21 @@
       position: relative;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
       padding:
-        calc(12px + var(--safe-top))
+        calc(10px + var(--safe-top))
         calc(10px + var(--safe-right))
-        12px
-        calc(14px + var(--safe-left));
+        10px
+        calc(10px + var(--safe-left));
       background: var(--card-strong);
       border-bottom: 1px solid var(--line);
     }
 
-    /* Swipe handle indicator */
+    /* Swipe handle indicator (mobile only) */
     .modal-header::before {
       position: absolute;
-      top: 6px;
+      top: 5px;
       left: 50%;
       transform: translateX(-50%);
       width: 36px;
@@ -463,26 +462,15 @@
     .modal-title-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
       min-width: 0;
       flex: 1;
-    }
-
-    .modal-title-icon {
-      display: inline-grid;
-      width: 30px;
-      height: 30px;
-      flex: 0 0 auto;
-      place-items: center;
-      color: var(--accent-2);
-      background: var(--modal-title-bg);
-      border-radius: 8px;
+      padding: 0 8px;
     }
 
     .modal-title {
       min-width: 0;
       overflow: hidden;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       text-overflow: ellipsis;
@@ -504,6 +492,26 @@
     }
 
     .close-button:active {
+      transform: scale(0.92);
+      background: var(--close-active-bg);
+    }
+
+    .external-button {
+      display: inline-grid;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      place-items: center;
+      color: var(--text);
+      cursor: pointer;
+      background: var(--close-bg);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      text-decoration: none;
+      transition: transform 140ms ease, background 140ms ease;
+    }
+
+    .external-button:active {
       transform: scale(0.92);
       background: var(--close-active-bg);
     }
@@ -613,6 +621,10 @@
         display: none;
       }
 
+      .modal-header {
+        padding: 12px 14px;
+      }
+
       .loader {
         top: 56px;
       }
@@ -703,21 +715,19 @@
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <section class="modal-panel" role="document">
       <header class="modal-header" id="modalHeader">
-        <div class="modal-title-wrap">
-          <span class="modal-title-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 9.2L4.8 12L8 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M16 9.2L19.2 12L16 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M13.5 7.8L10.5 16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <div class="modal-title" id="modalTitle">Просмотр курса</div>
-        </div>
-        <button class="close-button" id="closeModal" type="button" aria-label="Закрыть">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <button class="close-button" id="closeModal" type="button" aria-label="Назад">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
+        <div class="modal-title-wrap">
+          <div class="modal-title" id="modalTitle">Просмотр курса</div>
+        </div>
+        <a class="external-button" id="externalLink" href="#" target="_blank" rel="noopener" aria-label="Открыть в новой вкладке">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M14 5H19V10M19 5L10 14M19 14V19H5V5H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
       </header>
       <div class="preview-wrapper">
         <iframe class="preview-frame" id="previewFrame" title="Предпросмотр курса" allow="fullscreen"></iframe>
@@ -753,6 +763,7 @@
       var closeModalButton = document.getElementById('closeModal');
       var previewFrame = document.getElementById('previewFrame');
       var loader = document.getElementById('loader');
+      var externalLink = document.getElementById('externalLink');
       var themeToggle = document.getElementById('themeToggle');
       var themeIcon = document.getElementById('themeIcon');
 
@@ -801,6 +812,47 @@
         return '';
       }
 
+      // Extract <title> from HTML text
+      function extractTitle(html) {
+        if (!html) return null;
+        var match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        if (match && match[1]) {
+          var title = match[1]
+            .replace(/<[^>]+>/g, '')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/&nbsp;/g, ' ')
+            .trim();
+          return title || null;
+        }
+        return null;
+      }
+
+      // Extract <h1> from HTML text as fallback
+      function extractH1(html) {
+        if (!html) return null;
+        var match = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+        if (match && match[1]) {
+          var text = match[1]
+            .replace(/<[^>]+>/g, '')
+            .replace(/&amp;/g, '&')
+            .replace(/&nbsp;/g, ' ')
+            .trim();
+          return text || null;
+        }
+        return null;
+      }
+
+      function prettifyName(path) {
+        if (!path) return '';
+        var base = path.split('/').pop().replace(/\.html$/i, '');
+        var pretty = base.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+        return pretty || path;
+      }
+
       function normalizeFiles(list) {
         var seen = {};
         return list
@@ -816,7 +868,54 @@
             seen[lower] = true;
             return true;
           })
-          .sort(function(a, b) { return a.localeCompare(b, 'ru'); });
+          .sort(function(a, b) { return a.localeCompare(b, 'ru'); })
+          .map(function(path) {
+            return {
+              path: path,
+              title: null,
+              loaded: false
+            };
+          });
+      }
+
+      // Try to fetch each HTML file's content (same-origin on GitHub Pages works)
+      // and extract <title>. Falls back to prettified filename.
+      function fetchTitlesForFiles(fileObjects) {
+        var MAX_CONCURRENT = 4;
+        var index = 0;
+
+        function worker() {
+          while (index < fileObjects.length) {
+            var file = fileObjects[index++];
+            if (!file) continue;
+            var path = file.path;
+            tryFetchTitle(path).then(function(title) {
+              file.title = title;
+              file.loaded = true;
+              updateCardTitle(file);
+            });
+          }
+        }
+
+        var workers = Math.min(MAX_CONCURRENT, fileObjects.length);
+        for (var w = 0; w < workers; w++) {
+          worker();
+        }
+      }
+
+      function tryFetchTitle(path) {
+        return fetch(path, { cache: 'no-store' })
+          .then(function(response) {
+            if (!response.ok) return null;
+            return response.text();
+          })
+          .then(function(html) {
+            if (!html) return null;
+            return extractTitle(html) || extractH1(html) || null;
+          })
+          .catch(function() {
+            return null;
+          });
       }
 
       function fetchFilesFromGitHub() {
@@ -850,10 +949,9 @@
       function loadFiles() {
         var target = detectRepo();
 
-        // If repo can't be detected and no fallback, show helpful error
         if (!target && (!CONFIG.fallbackFiles || CONFIG.fallbackFiles.length === 0)) {
           skeleton.hidden = true;
-          errorState.innerHTML = '<strong>Настройте репозиторий.</strong> Добавьте owner/repo в CONFIG в JavaScript или используйте домен *.github.io. Файл: index.html, строка ~760.';
+          errorState.innerHTML = '<strong>Настройте репозиторий.</strong> Добавьте owner/repo в CONFIG в JavaScript или используйте домен *.github.io.';
           errorState.hidden = false;
           fileCount.textContent = '0 курсов';
           return;
@@ -869,12 +967,15 @@
                 fileCount.textContent = '0 курсов';
               } else {
                 renderFiles();
+                // Fetch titles from HTML files in background
+                fetchTitlesForFiles(visibleFiles);
               }
             } else if (CONFIG.fallbackFiles && CONFIG.fallbackFiles.length) {
               visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
               renderFiles();
+              fetchTitlesForFiles(visibleFiles);
             } else {
-              showLoadingError('Не удалось получить список файлов. Проверьте интернет или настройки CORS.');
+              showLoadingError('Не удалось получить список файлов.');
             }
           })
           .catch(function(err) {
@@ -912,13 +1013,6 @@
           '</svg>';
       }
 
-      function prettifyName(file) {
-        if (!file) return '';
-        var base = file.split('/').pop().replace(/\.html$/i, '');
-        var pretty = base.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
-        return pretty || file;
-      }
-
       function renderFiles() {
         skeleton.hidden = true;
         errorState.hidden = true;
@@ -937,49 +1031,69 @@
         var fragment = document.createDocumentFragment();
 
         for (var i = 0; i < visibleFiles.length; i++) {
-          (function(file, index) {
-            var card = document.createElement('article');
-            card.className = 'file-card';
-            card.style.animationDelay = Math.min(index * 50, 400) + 'ms';
-            card.setAttribute('role', 'button');
-            card.setAttribute('tabindex', '0');
-            card.setAttribute('aria-label', 'Открыть курс ' + prettifyName(file));
+          var file = visibleFiles[i];
+          var card = document.createElement('article');
+          card.className = 'file-card';
+          card._filePath = file.path;
+          card.style.animationDelay = Math.min(i * 50, 400) + 'ms';
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
 
-            var icon = document.createElement('div');
-            icon.className = 'file-icon';
-            icon.innerHTML = createIconSVG();
+          var displayName = file.title || prettifyName(file.path);
+          card.setAttribute('aria-label', 'Открыть: ' + displayName);
 
-            var name = document.createElement('div');
-            name.className = 'file-name';
-            name.textContent = prettifyName(file);
+          var icon = document.createElement('div');
+          icon.className = 'file-icon';
+          icon.innerHTML = createIconSVG();
 
-            var path = document.createElement('div');
-            path.className = 'file-path';
-            path.textContent = file;
+          var name = document.createElement('div');
+          name.className = 'file-name';
+          name.textContent = displayName;
 
-            var action = document.createElement('span');
-            action.className = 'open-button';
-            action.setAttribute('aria-hidden', 'true');
-            action.innerHTML = createArrowSVG();
+          var path = document.createElement('div');
+          path.className = 'file-path';
+          path.textContent = file.path;
 
-            card.appendChild(icon);
-            card.appendChild(name);
-            card.appendChild(path);
-            card.appendChild(action);
+          var action = document.createElement('span');
+          action.className = 'open-button';
+          action.setAttribute('aria-hidden', 'true');
+          action.innerHTML = createArrowSVG();
 
-            card.addEventListener('click', function() { openModal(file); });
+          card.appendChild(icon);
+          card.appendChild(name);
+          card.appendChild(path);
+          card.appendChild(action);
+
+          (function(f) {
+            card.addEventListener('click', function() { openModal(f); });
             card.addEventListener('keydown', function(event) {
               if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                openModal(file);
+                openModal(f);
               }
             });
+          })(file);
 
-            fragment.appendChild(card);
-          })(visibleFiles[i], i);
+          fragment.appendChild(card);
         }
 
         fileGrid.appendChild(fragment);
+      }
+
+      // Update existing card when title is fetched
+      function updateCardTitle(file) {
+        if (!file || !file.path) return;
+        var cards = fileGrid.querySelectorAll('.file-card');
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i]._filePath === file.path) {
+            var nameEl = cards[i].querySelector('.file-name');
+            if (nameEl && file.title) {
+              nameEl.textContent = file.title;
+              cards[i].setAttribute('aria-label', 'Открыть: ' + file.title);
+            }
+            return;
+          }
+        }
       }
 
       function closeModal() {
@@ -997,8 +1111,13 @@
       }
 
       function openModal(file) {
+        var path = typeof file === 'string' ? file : file.path;
+        var displayTitle = (typeof file === 'object' && file.title) ? file.title : prettifyName(path);
+
         lastFocusedElement = document.activeElement;
-        modalTitle.textContent = prettifyName(file);
+        modalTitle.textContent = displayTitle;
+        externalLink.href = path;
+        externalLink.setAttribute('aria-label', 'Открыть "' + displayTitle + '" в новой вкладке');
         loader.classList.remove('is-hidden');
 
         // Reset iframe properly to force reload
@@ -1006,14 +1125,13 @@
         var wrapper = previewFrame.parentNode;
         wrapper.removeChild(previewFrame);
         wrapper.insertBefore(previewFrame, loader);
-        previewFrame.src = file;
+        previewFrame.src = path;
 
-        // Fallback: hide loader after 5s even if load event doesn't fire
         if (loadTimer) clearTimeout(loadTimer);
         loadTimer = setTimeout(function() {
           loader.classList.add('is-hidden');
           loadTimer = null;
-        }, 5000);
+        }, 6000);
 
         modal.classList.add('is-open');
         modal.setAttribute('aria-hidden', 'false');
