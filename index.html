@@ -586,7 +586,7 @@
     <section aria-label="Список HTML файлов">
       <div class="grid" id="fileGrid"></div>
       <div class="empty-state" id="emptyState" hidden>
-        Добавьте имена HTML файлов в массив <strong>files</strong> внутри JavaScript. Сам <strong>index.html</strong> будет исключен автоматически.
+        Пока в репозитории нет HTML файлов кроме <strong>index.html</strong>. Загрузите их и обновите страницу.
       </div>
     </section>
   </main>
@@ -610,7 +610,25 @@
   </div>
 
   <script>
-    const files = ['page1.html', 'page2.html', 'page3.html'];
+    // -----------------------------------------------------------------
+    // КОНФИГУРАЦИЯ
+    // -----------------------------------------------------------------
+    // Если сайт открыт на github.io — список .html файлов будет получен
+    // автоматически через GitHub API. При необходимости можно вручную
+    // указать репозиторий (owner/repo) и ветку.
+    // -----------------------------------------------------------------
+    const CONFIG = {
+      // Например: 'username'. Если null — определится из URL.
+      owner: null,
+      // Например: 'my-repo'. Если null — определится из URL.
+      repo: null,
+      // Ветка по умолчанию. Если null — будет использована основная ветка.
+      branch: null,
+      // Резервный список файлов, если GitHub API недоступен (например,
+      // при локальном открытии или на кастомном домене без настройки).
+      fallbackFiles: []
+    };
+    // -----------------------------------------------------------------
 
     const fileGrid = document.getElementById('fileGrid');
     const emptyState = document.getElementById('emptyState');
@@ -624,15 +642,105 @@
     const themeToggle = document.getElementById('themeToggle');
 
     let lastFocusedElement = null;
+    let visibleFiles = [];
 
-    const visibleFiles = files
-      .filter(Boolean)
-      .map((file) => file.trim())
-      .filter((file, index, list) => {
-        const isHtml = file.toLowerCase().endsWith('.html');
-        const isIndex = file.toLowerCase().split('/').pop() === 'index.html';
-        return isHtml && !isIndex && list.indexOf(file) === index;
+    function detectRepo() {
+      const host = location.hostname;
+      const parts = location.pathname.split('/').filter(Boolean);
+
+      let owner = CONFIG.owner;
+      let repo = CONFIG.repo;
+
+      if (!owner && host.endsWith('.github.io')) {
+        owner = host.split('.')[0];
+      }
+
+      if (!repo) {
+        if (host.endsWith('.github.io')) {
+          // username.github.io/repo/...  → repo = parts[0]
+          // username.github.io/          → repo = username.github.io
+          repo = parts.length > 0 ? parts[0] : `${owner}.github.io`;
+        }
+      }
+
+      return owner && repo ? { owner, repo } : null;
+    }
+
+    function detectBasePath() {
+      // Базовая директория, в которой лежит index.html на сайте.
+      const host = location.hostname;
+      const parts = location.pathname.split('/').filter(Boolean);
+
+      if (host.endsWith('.github.io') && parts.length > 0) {
+        const last = parts[parts.length - 1];
+        const isFile = /\.[a-z0-9]+$/i.test(last);
+        const dirParts = isFile ? parts.slice(1, -1) : parts.slice(1);
+        return dirParts.join('/');
+      }
+
+      return '';
+    }
+
+    function normalizeFiles(list) {
+      const seen = new Set();
+      return list
+        .filter(Boolean)
+        .map((file) => String(file).trim())
+        .filter((file) => {
+          if (!file) return false;
+          const lower = file.toLowerCase();
+          const name = lower.split('/').pop();
+          if (!lower.endsWith('.html')) return false;
+          if (name === 'index.html') return false;
+          if (seen.has(lower)) return false;
+          seen.add(lower);
+          return true;
+        })
+        .sort((a, b) => a.localeCompare(b, 'ru'));
+    }
+
+    async function fetchFilesFromGitHub() {
+      const target = detectRepo();
+      if (!target) return null;
+
+      const { owner, repo } = target;
+      const basePath = detectBasePath();
+      const branchPart = CONFIG.branch ? `?ref=${encodeURIComponent(CONFIG.branch)}` : '';
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${basePath}${branchPart}`;
+
+      const response = await fetch(apiUrl, {
+        headers: { Accept: 'application/vnd.github+json' }
       });
+
+      if (!response.ok) {
+        throw new Error(`GitHub API: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!Array.isArray(data)) return [];
+
+      return data
+        .filter((item) => item.type === 'file' && /\.html$/i.test(item.name))
+        .map((item) => item.name);
+    }
+
+    async function loadFiles() {
+      fileCount.textContent = 'Загрузка...';
+
+      try {
+        const remoteFiles = await fetchFilesFromGitHub();
+        if (remoteFiles) {
+          visibleFiles = normalizeFiles(remoteFiles);
+          renderFiles();
+          return;
+        }
+      } catch (error) {
+        console.warn('Не удалось получить список файлов с GitHub:', error);
+      }
+
+      visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
+      renderFiles();
+    }
 
     function formatCount(count) {
       const lastDigit = count % 10;
@@ -758,7 +866,7 @@
     });
 
     applySavedTheme();
-    renderFiles();
+    loadFiles();
   </script>
 </body>
 </html>
