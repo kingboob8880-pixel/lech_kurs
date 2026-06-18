@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5">
-  <meta name="theme-color" content="#fffaf1" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#10100e" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#fffaf1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -27,6 +26,26 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
+      /* Fallback solid colors instead of color-mix() */
+      --topbar-bg: rgba(255, 250, 241, 0.88);
+      --theme-active-bg: rgba(184, 121, 50, 0.1);
+      --kicker-bg: rgba(25, 107, 93, 0.1);
+      --filecount-bg: rgba(25, 107, 93, 0.1);
+      --filecount-border: rgba(25, 107, 93, 0.2);
+      --card-active-border: rgba(184, 121, 50, 0.35);
+      --card-active-bg: rgba(184, 121, 50, 0.04);
+      --icon-bg: rgba(25, 107, 93, 0.1);
+      --icon-border: rgba(25, 107, 93, 0.2);
+      --arrow-bg: rgba(25, 107, 93, 0.14);
+      --close-bg: rgba(32, 25, 19, 0.05);
+      --close-active-bg: rgba(184, 121, 50, 0.18);
+      --modal-title-bg: rgba(25, 107, 93, 0.1);
+      --skeleton-from: rgba(255, 255, 255, 0.92);
+      --skeleton-mid: rgba(184, 121, 50, 0.08);
+      --skeleton-to: rgba(255, 255, 255, 0.92);
+      --loader-border: rgba(184, 121, 50, 0.2);
+      --hover-border: rgba(184, 121, 50, 0.35);
+      --hover-bg: rgba(184, 121, 50, 0.12);
     }
 
     [data-theme="dark"] {
@@ -40,6 +59,25 @@
       --accent: #e4a954;
       --accent-2: #58bca9;
       --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.32);
+      --topbar-bg: rgba(24, 23, 19, 0.88);
+      --theme-active-bg: rgba(228, 169, 84, 0.12);
+      --kicker-bg: rgba(88, 188, 169, 0.12);
+      --filecount-bg: rgba(88, 188, 169, 0.1);
+      --filecount-border: rgba(88, 188, 169, 0.22);
+      --card-active-border: rgba(228, 169, 84, 0.35);
+      --card-active-bg: rgba(228, 169, 84, 0.04);
+      --icon-bg: rgba(88, 188, 169, 0.1);
+      --icon-border: rgba(88, 188, 169, 0.22);
+      --arrow-bg: rgba(88, 188, 169, 0.14);
+      --close-bg: rgba(247, 239, 226, 0.05);
+      --close-active-bg: rgba(228, 169, 84, 0.18);
+      --modal-title-bg: rgba(88, 188, 169, 0.1);
+      --skeleton-from: rgba(34, 31, 27, 0.92);
+      --skeleton-mid: rgba(228, 169, 84, 0.08);
+      --skeleton-to: rgba(34, 31, 27, 0.92);
+      --loader-border: rgba(228, 169, 84, 0.22);
+      --hover-border: rgba(228, 169, 84, 0.35);
+      --hover-bg: rgba(228, 169, 84, 0.12);
     }
 
     * {
@@ -50,6 +88,7 @@
     html {
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
+      scroll-behavior: smooth;
     }
 
     body {
@@ -91,20 +130,18 @@
     /* ===================== TOPBAR ===================== */
     .topbar {
       position: sticky;
-      top: calc(8px + var(--safe-top));
+      top: 8px;
       z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 22px;
-      padding: 10px 12px;
-      background: color-mix(in srgb, var(--bg-strong) 82%, transparent);
+      padding: 10px 14px;
+      background: var(--topbar-bg);
       border: 1px solid var(--line);
       border-radius: 999px;
       box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
       animation: fadeDown 500ms ease both;
     }
 
@@ -129,7 +166,7 @@
       border-radius: 12px;
     }
 
-    .brand-row span:last-child {
+    .brand-name {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -151,7 +188,7 @@
 
     .theme-toggle:active {
       transform: scale(0.94);
-      background: color-mix(in srgb, var(--accent) 14%, var(--card));
+      background: var(--theme-active-bg);
     }
 
     /* ===================== HERO ===================== */
@@ -171,16 +208,16 @@
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+      background: var(--kicker-bg);
       border-radius: 999px;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(1.7rem, 7.5vw, 2.4rem);
+      font-size: clamp(1.6rem, 7vw, 2.4rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
+      letter-spacing: -0.025em;
+      line-height: 1.12;
     }
 
     .hero p {
@@ -194,7 +231,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .file-count {
@@ -205,8 +242,8 @@
       color: var(--accent-2);
       font-size: 0.85rem;
       font-weight: 700;
-      background: color-mix(in srgb, var(--accent-2) 10%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent-2) 22%, transparent);
+      background: var(--filecount-bg);
+      border: 1px solid var(--filecount-border);
       border-radius: 999px;
     }
 
@@ -247,15 +284,15 @@
       transform: translateY(8px);
       opacity: 0;
       animation: cardIn 380ms ease forwards;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
       user-select: none;
       -webkit-user-select: none;
     }
 
     .file-card:active {
-      transform: translateY(0) scale(0.985);
-      border-color: color-mix(in srgb, var(--accent) 38%, var(--line));
-      background: color-mix(in srgb, var(--accent) 5%, var(--card-strong));
+      transform: translateY(0) scale(0.988);
+      border-color: var(--card-active-border);
+      background: var(--card-active-bg);
     }
 
     .file-icon {
@@ -265,8 +302,8 @@
       height: 56px;
       place-items: center;
       color: var(--accent-2);
-      background: color-mix(in srgb, var(--accent-2) 12%, var(--card));
-      border: 1px solid color-mix(in srgb, var(--accent-2) 22%, transparent);
+      background: var(--icon-bg);
+      border: 1px solid var(--icon-border);
       border-radius: 16px;
     }
 
@@ -303,11 +340,8 @@
       flex: 0 0 auto;
       place-items: center;
       color: var(--accent-2);
-      background: color-mix(in srgb, var(--accent-2) 14%, transparent);
-      border: 0;
+      background: var(--arrow-bg);
       border-radius: 999px;
-      cursor: pointer;
-      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
     }
 
     .file-card:active .open-button {
@@ -316,7 +350,7 @@
       transform: translateX(2px);
     }
 
-    /* Состояния */
+    /* ===================== STATES ===================== */
     .empty-state,
     .error-state {
       padding: 22px 18px;
@@ -336,10 +370,10 @@
     .skeleton-card {
       height: 86px;
       background: linear-gradient(90deg,
-        color-mix(in srgb, var(--card) 92%, transparent) 0%,
-        color-mix(in srgb, var(--accent) 8%, var(--card)) 50%,
-        color-mix(in srgb, var(--card) 92%, transparent) 100%);
-      background-size: 220% 100%;
+        var(--skeleton-from) 0%,
+        var(--skeleton-mid) 50%,
+        var(--skeleton-to) 100%);
+      background-size: 200% 100%;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       animation: shimmer 1.4s ease-in-out infinite;
@@ -351,8 +385,7 @@
       inset: 0;
       z-index: 100;
       display: flex;
-      align-items: flex-end;
-      justify-content: center;
+      flex-direction: column;
       pointer-events: none;
       opacity: 0;
       transition: opacity 220ms ease;
@@ -366,23 +399,26 @@
     .modal-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(13, 12, 10, 0.6);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      background: rgba(13, 12, 10, 0.55);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
     }
 
     .modal-panel {
       position: relative;
+      z-index: 1;
       display: grid;
       grid-template-rows: auto 1fr;
       width: 100%;
       height: 100%;
       height: 100dvh;
+      margin-top: auto;
       overflow: hidden;
       background: var(--card-strong);
-      transform: translateY(24px);
+      border-radius: 20px 20px 0 0;
+      transform: translateY(100%);
       opacity: 0;
-      transition: transform 280ms cubic-bezier(0.2, 0.9, 0.25, 1), opacity 220ms ease;
+      transition: transform 300ms cubic-bezier(0.2, 0.9, 0.25, 1), opacity 200ms ease;
     }
 
     .modal.is-open .modal-panel {
@@ -391,18 +427,32 @@
     }
 
     .modal-header {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
       min-width: 0;
       padding:
-        calc(10px + var(--safe-top))
+        calc(12px + var(--safe-top))
         calc(10px + var(--safe-right))
-        10px
+        12px
         calc(14px + var(--safe-left));
       background: var(--card-strong);
       border-bottom: 1px solid var(--line);
+    }
+
+    /* Swipe handle indicator */
+    .modal-header::before {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 4px;
+      content: "";
+      background: var(--line);
+      border-radius: 999px;
     }
 
     .modal-title-wrap {
@@ -415,13 +465,13 @@
 
     .modal-title-icon {
       display: inline-grid;
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       flex: 0 0 auto;
       place-items: center;
       color: var(--accent-2);
-      background: color-mix(in srgb, var(--accent-2) 12%, transparent);
-      border-radius: 10px;
+      background: var(--modal-title-bg);
+      border-radius: 8px;
     }
 
     .modal-title {
@@ -429,7 +479,7 @@
       overflow: hidden;
       font-size: 0.92rem;
       font-weight: 700;
-      letter-spacing: -0.015em;
+      letter-spacing: -0.01em;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -442,7 +492,7 @@
       place-items: center;
       color: var(--text);
       cursor: pointer;
-      background: color-mix(in srgb, var(--text) 6%, transparent);
+      background: var(--close-bg);
       border: 1px solid var(--line);
       border-radius: 999px;
       transition: transform 140ms ease, background 140ms ease;
@@ -450,7 +500,14 @@
 
     .close-button:active {
       transform: scale(0.92);
-      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      background: var(--close-active-bg);
+    }
+
+    .preview-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
     }
 
     .preview-frame {
@@ -458,20 +515,20 @@
       height: 100%;
       background: #fff;
       border: 0;
-      padding-bottom: var(--safe-bottom);
+      display: block;
     }
 
     .loader {
       position: absolute;
       inset: 0;
-      top: calc(52px + var(--safe-top));
       display: grid;
       place-items: center;
-      gap: 10px;
+      gap: 12px;
       color: var(--muted);
       font-size: 0.9rem;
       background: var(--card-strong);
       transition: opacity 220ms ease, visibility 220ms ease;
+      z-index: 2;
     }
 
     .loader.is-hidden {
@@ -480,10 +537,10 @@
     }
 
     .loader::before {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       content: "";
-      border: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      border: 3px solid var(--loader-border);
       border-top-color: var(--accent);
       border-radius: 999px;
       animation: spin 800ms linear infinite;
@@ -509,14 +566,18 @@
     }
 
     @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+      0% { background-position: 150% 0; }
+      100% { background-position: -150% 0; }
     }
 
     /* ===================== TABLET ===================== */
     @media (min-width: 600px) {
       .shell {
         padding-top: calc(20px + var(--safe-top));
+      }
+
+      .topbar {
+        top: calc(10px + var(--safe-top));
       }
 
       h1 {
@@ -528,23 +589,27 @@
       }
 
       .modal {
+        flex-direction: row;
         align-items: center;
+        justify-content: center;
         padding: 24px;
       }
 
       .modal-panel {
         width: min(900px, 92vw);
         height: min(820px, 92dvh);
+        margin-top: 0;
         border-radius: 22px;
         box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+        transform: translateY(20px) scale(0.97);
       }
 
-      .modal-header {
-        padding: 12px 14px;
+      .modal-header::before {
+        display: none;
       }
 
       .loader {
-        top: 60px;
+        top: 56px;
       }
     }
 
@@ -562,12 +627,13 @@
     @media (hover: hover) and (pointer: fine) {
       .file-card:hover {
         transform: translateY(-2px);
-        border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+        border-color: var(--hover-border);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
       }
 
       .theme-toggle:hover,
       .close-button:hover {
-        background: color-mix(in srgb, var(--accent) 12%, transparent);
+        background: var(--hover-bg);
       }
     }
 
@@ -575,9 +641,9 @@
       *,
       *::before,
       *::after {
-        animation-duration: 1ms !important;
+        animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: 1ms !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -593,7 +659,7 @@
             <path d="M12 9.1V14.3M9.4 11.7H14.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </span>
-        <span>Лекарь Абу Мухаммад</span>
+        <span class="brand-name">Лекарь Абу Мухаммад</span>
       </div>
 
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">
@@ -631,7 +697,7 @@
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <section class="modal-panel" role="document">
-      <header class="modal-header">
+      <header class="modal-header" id="modalHeader">
         <div class="modal-title-wrap">
           <span class="modal-title-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -648,288 +714,411 @@
           </svg>
         </button>
       </header>
-      <iframe class="preview-frame" id="previewFrame" title="Предпросмотр курса" loading="lazy"></iframe>
-      <div class="loader" id="loader" aria-live="polite">Загрузка курса...</div>
+      <div class="preview-wrapper">
+        <iframe class="preview-frame" id="previewFrame" title="Предпросмотр курса" allow="fullscreen"></iframe>
+        <div class="loader" id="loader" aria-live="polite">Загрузка курса...</div>
+      </div>
     </section>
   </div>
 
   <script>
-    // -----------------------------------------------------------------
-    // КОНФИГУРАЦИЯ
-    // -----------------------------------------------------------------
-    const CONFIG = {
-      owner: null,         // например 'username' (auto, если null)
-      repo: null,          // например 'my-repo' (auto, если null)
-      branch: null,        // например 'main' (использует default, если null)
-      fallbackFiles: []    // резерв, если GitHub API недоступен
-    };
-    // -----------------------------------------------------------------
+    (function() {
+      'use strict';
 
-    const fileGrid = document.getElementById('fileGrid');
-    const skeleton = document.getElementById('skeleton');
-    const emptyState = document.getElementById('emptyState');
-    const errorState = document.getElementById('errorState');
-    const fileCount = document.getElementById('fileCount');
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const closeModalButton = document.getElementById('closeModal');
-    const previewFrame = document.getElementById('previewFrame');
-    const loader = document.getElementById('loader');
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
+      // -----------------------------------------------------------------
+      // КОНФИГУРАЦИЯ
+      // -----------------------------------------------------------------
+      var CONFIG = {
+        owner: null,
+        repo: null,
+        branch: null,
+        fallbackFiles: []
+      };
+      // -----------------------------------------------------------------
 
-    const SUN_ICON = '<path d="M12 3V5.2M12 18.8V21M5.64 5.64L7.2 7.2M16.8 16.8L18.36 18.36M3 12H5.2M18.8 12H21M5.64 18.36L7.2 16.8M16.8 7.2L18.36 5.64" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/>';
-    const MOON_ICON = '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
+      var fileGrid = document.getElementById('fileGrid');
+      var skeleton = document.getElementById('skeleton');
+      var emptyState = document.getElementById('emptyState');
+      var errorState = document.getElementById('errorState');
+      var fileCount = document.getElementById('fileCount');
+      var modal = document.getElementById('modal');
+      var modalTitle = document.getElementById('modalTitle');
+      var modalBackdrop = document.getElementById('modalBackdrop');
+      var modalHeader = document.getElementById('modalHeader');
+      var closeModalButton = document.getElementById('closeModal');
+      var previewFrame = document.getElementById('previewFrame');
+      var loader = document.getElementById('loader');
+      var themeToggle = document.getElementById('themeToggle');
+      var themeIcon = document.getElementById('themeIcon');
 
-    let lastFocusedElement = null;
-    let visibleFiles = [];
+      var SUN_ICON = '<path d="M12 3V5.2M12 18.8V21M5.64 5.64L7.2 7.2M16.8 16.8L18.36 18.36M3 12H5.2M18.8 12H21M5.64 18.36L7.2 16.8M16.8 7.2L18.36 5.64" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/>';
+      var MOON_ICON = '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
 
-    function detectRepo() {
-      const host = location.hostname;
-      const parts = location.pathname.split('/').filter(Boolean);
-      let owner = CONFIG.owner;
-      let repo = CONFIG.repo;
-      if (!owner && host.endsWith('.github.io')) owner = host.split('.')[0];
-      if (!repo && host.endsWith('.github.io')) {
-        repo = parts.length > 0 ? parts[0] : `${owner}.github.io`;
+      var lastFocusedElement = null;
+      var visibleFiles = [];
+
+      // Safe localStorage wrapper
+      function safeGetItem(key) {
+        try { return localStorage.getItem(key); }
+        catch(e) { return null; }
       }
-      return owner && repo ? { owner, repo } : null;
-    }
 
-    function detectBasePath() {
-      const host = location.hostname;
-      const parts = location.pathname.split('/').filter(Boolean);
-      if (host.endsWith('.github.io') && parts.length > 0) {
-        const last = parts[parts.length - 1];
-        const isFile = /\.[a-z0-9]+$/i.test(last);
-        const dirParts = isFile ? parts.slice(1, -1) : parts.slice(1);
-        return dirParts.join('/');
+      function safeSetItem(key, value) {
+        try { localStorage.setItem(key, value); }
+        catch(e) { /* noop */ }
       }
-      return '';
-    }
 
-    function normalizeFiles(list) {
-      const seen = new Set();
-      return list
-        .filter(Boolean)
-        .map((f) => String(f).trim())
-        .filter((f) => {
-          if (!f) return false;
-          const lower = f.toLowerCase();
-          const name = lower.split('/').pop();
-          if (!lower.endsWith('.html')) return false;
-          if (name === 'index.html') return false;
-          if (seen.has(lower)) return false;
-          seen.add(lower);
-          return true;
-        })
-        .sort((a, b) => a.localeCompare(b, 'ru'));
-    }
+      // Detect if we're on GitHub Pages
+      function detectRepo() {
+        var host = location.hostname;
+        var parts = location.pathname.split('/').filter(function(p) { return p; });
+        var owner = CONFIG.owner;
+        var repo = CONFIG.repo;
 
-    async function fetchFilesFromGitHub() {
-      const target = detectRepo();
-      if (!target) return null;
-      const { owner, repo } = target;
-      const basePath = detectBasePath();
-      const branchPart = CONFIG.branch ? `?ref=${encodeURIComponent(CONFIG.branch)}` : '';
-      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${basePath}${branchPart}`;
-      const response = await fetch(apiUrl, { headers: { Accept: 'application/vnd.github+json' } });
-      if (!response.ok) throw new Error(`GitHub API: ${response.status}`);
-      const data = await response.json();
-      if (!Array.isArray(data)) return [];
-      return data
-        .filter((item) => item.type === 'file' && /\.html$/i.test(item.name))
-        .map((item) => item.name);
-    }
-
-    async function loadFiles() {
-      try {
-        const remote = await fetchFilesFromGitHub();
-        if (remote) {
-          visibleFiles = normalizeFiles(remote);
-          renderFiles();
-          return;
+        if (!owner && host.indexOf('.github.io') !== -1) {
+          owner = host.split('.')[0];
         }
-      } catch (error) {
-        console.warn('GitHub API недоступен:', error);
+        if (!repo && host.indexOf('.github.io') !== -1) {
+          repo = parts.length > 0 ? parts[0] : (owner ? owner + '.github.io' : null);
+        }
+        return owner && repo ? { owner: owner, repo: repo } : null;
       }
-      if (CONFIG.fallbackFiles && CONFIG.fallbackFiles.length) {
-        visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
-        renderFiles();
-      } else {
+
+      function detectBasePath() {
+        var host = location.hostname;
+        var parts = location.pathname.split('/').filter(function(p) { return p; });
+        if (host.indexOf('.github.io') !== -1 && parts.length > 0) {
+          var last = parts[parts.length - 1];
+          var isFile = /[\.\-][a-z0-9]+$/i.test(last);
+          var dirParts = isFile ? parts.slice(1, -1) : parts.slice(1);
+          return dirParts.join('/');
+        }
+        return '';
+      }
+
+      function normalizeFiles(list) {
+        var seen = {};
+        return list
+          .filter(function(f) { return f; })
+          .map(function(f) { return String(f).trim(); })
+          .filter(function(f) {
+            if (!f) return false;
+            var lower = f.toLowerCase();
+            var name = lower.split('/').pop();
+            if (lower.slice(-5) !== '.html') return false;
+            if (name === 'index.html') return false;
+            if (seen[lower]) return false;
+            seen[lower] = true;
+            return true;
+          })
+          .sort(function(a, b) { return a.localeCompare(b, 'ru'); });
+      }
+
+      function fetchFilesFromGitHub() {
+        var target = detectRepo();
+        if (!target) return null;
+        var owner = target.owner;
+        var repo = target.repo;
+        var basePath = detectBasePath();
+        var branchPart = CONFIG.branch ? '?ref=' + encodeURIComponent(CONFIG.branch) : '';
+        var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + basePath + branchPart;
+
+        return fetch(apiUrl, { headers: { Accept: 'application/vnd.github+json' } })
+          .then(function(response) {
+            if (!response.ok) throw new Error('GitHub API: ' + response.status);
+            return response.json();
+          })
+          .then(function(data) {
+            if (!Array.isArray(data)) return [];
+            return data
+              .filter(function(item) {
+                return item.type === 'file' && /\.html$/i.test(item.name);
+              })
+              .map(function(item) { return item.name; });
+          })
+          .catch(function(err) {
+            console.warn('GitHub API error:', err.message);
+            return null;
+          });
+      }
+
+      function loadFiles() {
+        fetchFilesFromGitHub()
+          .then(function(remote) {
+            if (remote) {
+              visibleFiles = normalizeFiles(remote);
+              renderFiles();
+            } else {
+              // Fallback files or error
+              if (CONFIG.fallbackFiles && CONFIG.fallbackFiles.length) {
+                visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
+                renderFiles();
+              } else {
+                showLoadingError();
+              }
+            }
+          })
+          .catch(function(err) {
+            console.error('loadFiles failed:', err);
+            showLoadingError();
+          });
+      }
+
+      function showLoadingError() {
         skeleton.hidden = true;
         errorState.hidden = false;
         fileCount.textContent = '0 курсов';
       }
-    }
 
-    function formatCount(count) {
-      const last = count % 10;
-      const last2 = count % 100;
-      if (last === 1 && last2 !== 11) return `${count} курс`;
-      if (last >= 2 && last <= 4 && (last2 < 12 || last2 > 14)) return `${count} курса`;
-      return `${count} курсов`;
-    }
-
-    function createIconSVG() {
-      return `
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M8 9.2L4.8 12L8 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M16 9.2L19.2 12L16 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M13.5 7.8L10.5 16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      `;
-    }
-
-    function createArrowSVG() {
-      return `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      `;
-    }
-
-    function prettifyName(file) {
-      const base = file.split('/').pop().replace(/\.html$/i, '');
-      return base.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim() || file;
-    }
-
-    function renderFiles() {
-      skeleton.hidden = true;
-      errorState.hidden = true;
-      fileGrid.innerHTML = '';
-      fileCount.textContent = formatCount(visibleFiles.length);
-
-      if (visibleFiles.length === 0) {
-        emptyState.hidden = false;
-        fileGrid.hidden = true;
-        return;
+      function formatCount(count) {
+        var last = count % 10;
+        var last2 = count % 100;
+        if (last === 1 && last2 !== 11) return count + ' курс';
+        if (last >= 2 && last <= 4 && (last2 < 12 || last2 > 14)) return count + ' курса';
+        return count + ' курсов';
       }
 
-      emptyState.hidden = true;
-      fileGrid.hidden = false;
+      function createIconSVG() {
+        return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path d="M8 9.2L4.8 12L8 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<path d="M16 9.2L19.2 12L16 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<path d="M13.5 7.8L10.5 16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+          '</svg>';
+      }
 
-      const fragment = document.createDocumentFragment();
+      function createArrowSVG() {
+        return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>';
+      }
 
-      visibleFiles.forEach((file, index) => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'file-card';
-        card.style.animationDelay = `${Math.min(index * 50, 400)}ms`;
-        card.setAttribute('aria-label', `Открыть курс ${prettifyName(file)}`);
+      function prettifyName(file) {
+        if (!file) return '';
+        var base = file.split('/').pop().replace(/\.html$/i, '');
+        var pretty = base.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+        return pretty || file;
+      }
 
-        const icon = document.createElement('div');
-        icon.className = 'file-icon';
-        icon.innerHTML = createIconSVG();
+      function renderFiles() {
+        skeleton.hidden = true;
+        errorState.hidden = true;
+        fileGrid.innerHTML = '';
+        fileCount.textContent = formatCount(visibleFiles.length);
 
-        const name = document.createElement('div');
-        name.className = 'file-name';
-        name.textContent = prettifyName(file);
+        if (visibleFiles.length === 0) {
+          emptyState.hidden = false;
+          fileGrid.hidden = true;
+          return;
+        }
 
-        const path = document.createElement('div');
-        path.className = 'file-path';
-        path.textContent = file;
+        emptyState.hidden = true;
+        fileGrid.hidden = false;
 
-        const action = document.createElement('span');
-        action.className = 'open-button';
-        action.setAttribute('aria-hidden', 'true');
-        action.innerHTML = createArrowSVG();
+        var fragment = document.createDocumentFragment();
 
-        card.append(icon, name, path, action);
-        card.addEventListener('click', () => openModal(file));
+        for (var i = 0; i < visibleFiles.length; i++) {
+          (function(file, index) {
+            var card = document.createElement('article');
+            card.className = 'file-card';
+            card.style.animationDelay = Math.min(index * 50, 400) + 'ms';
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-label', 'Открыть курс ' + prettifyName(file));
 
-        fragment.appendChild(card);
+            var icon = document.createElement('div');
+            icon.className = 'file-icon';
+            icon.innerHTML = createIconSVG();
+
+            var name = document.createElement('div');
+            name.className = 'file-name';
+            name.textContent = prettifyName(file);
+
+            var path = document.createElement('div');
+            path.className = 'file-path';
+            path.textContent = file;
+
+            var action = document.createElement('span');
+            action.className = 'open-button';
+            action.setAttribute('aria-hidden', 'true');
+            action.innerHTML = createArrowSVG();
+
+            card.appendChild(icon);
+            card.appendChild(name);
+            card.appendChild(path);
+            card.appendChild(action);
+
+            card.addEventListener('click', function() { openModal(file); });
+            card.addEventListener('keydown', function(event) {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openModal(file);
+              }
+            });
+
+            fragment.appendChild(card);
+          })(visibleFiles[i], i);
+        }
+
+        fileGrid.appendChild(fragment);
+      }
+
+      function closeModal() {
+        if (!modal.classList.contains('is-open')) return;
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        setTimeout(function() {
+          previewFrame.removeAttribute('src');
+          loader.classList.remove('is-hidden');
+        }, 300);
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          try { lastFocusedElement.focus({ preventScroll: true }); } catch(e) {}
+        }
+      }
+
+      function openModal(file) {
+        lastFocusedElement = document.activeElement;
+        modalTitle.textContent = prettifyName(file);
+        loader.classList.remove('is-hidden');
+
+        // Reset iframe properly to force reload
+        previewFrame.removeAttribute('src');
+        var wrapper = previewFrame.parentNode;
+        wrapper.removeChild(previewFrame);
+        wrapper.insertBefore(previewFrame, loader);
+        previewFrame.src = file;
+
+        // Fallback: hide loader after 5s even if load event doesn't fire
+        if (loadTimer) clearTimeout(loadTimer);
+        loadTimer = setTimeout(function() {
+          loader.classList.add('is-hidden');
+          loadTimer = null;
+        }, 5000);
+
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        if (!isTouchDevice) {
+          closeModalButton.focus({ preventScroll: true });
+        }
+      }
+
+      function setTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        themeIcon.innerHTML = theme === 'dark' ? SUN_ICON : MOON_ICON;
+        themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Светлая тема' : 'Тёмная тема');
+        // Update theme-color meta tag
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.content = theme === 'dark' ? '#10100e' : '#fffaf1';
+        }
+      }
+
+      function applySavedTheme() {
+        var saved = safeGetItem('catalog-theme');
+        var preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        setTheme(saved || preferred);
+      }
+
+      // Swipe down to close — mobile only
+      var touchStartY = 0;
+      var touchDeltaY = 0;
+      var isSwiping = false;
+      var modalPanel = modal.querySelector('.modal-panel');
+
+      modalHeader.addEventListener('touchstart', function(e) {
+        // Don't start swipe if tapping the close button
+        if (e.target.closest('.close-button')) return;
+        touchStartY = e.touches[0].clientY;
+        touchDeltaY = 0;
+        isSwiping = false;
+      }, { passive: true });
+
+      modalHeader.addEventListener('touchmove', function(e) {
+        if (e.target.closest('.close-button')) return;
+        var deltaY = e.touches[0].clientY - touchStartY;
+        if (deltaY > 5) {
+          isSwiping = true;
+          touchDeltaY = deltaY;
+          modalPanel.style.transition = 'none';
+          modalPanel.style.transform = 'translateY(' + touchDeltaY + 'px)';
+        }
+      }, { passive: true });
+
+      modalHeader.addEventListener('touchend', function() {
+        if (!isSwiping) return;
+        modalPanel.style.transition = '';
+        if (touchDeltaY > 100) {
+          closeModal();
+        } else {
+          // Animate back to open position
+          modalPanel.style.transform = '';
+        }
+        isSwiping = false;
+        touchDeltaY = 0;
       });
 
-      fileGrid.appendChild(fragment);
-    }
+      // Also allow swipe from anywhere on the panel on mobile
+      var touchPanelStartY = 0;
+      var panelIsSwiping = false;
 
-    function openModal(file) {
-      lastFocusedElement = document.activeElement;
-      modalTitle.textContent = prettifyName(file);
-      loader.classList.remove('is-hidden');
-      previewFrame.src = file;
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      // Не вызываем focus на iOS — иначе появляется клавиатура для iframe
-      if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        closeModalButton.focus({ preventScroll: true });
-      }
-    }
+      modalPanel.addEventListener('touchstart', function(e) {
+        if (e.target.closest('.close-button') || e.target.closest('.preview-frame')) return;
+        touchPanelStartY = e.touches[0].clientY;
+        panelIsSwiping = false;
+      }, { passive: true });
 
-    function closeModal() {
-      if (!modal.classList.contains('is-open')) return;
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      window.setTimeout(() => {
-        previewFrame.removeAttribute('src');
-        loader.classList.remove('is-hidden');
-      }, 260);
-      if (lastFocusedElement && lastFocusedElement.focus) {
-        lastFocusedElement.focus({ preventScroll: true });
-      }
-    }
+      modalPanel.addEventListener('touchmove', function(e) {
+        if (e.target.closest('.close-button') || e.target.closest('.preview-frame')) return;
+        var deltaY = e.touches[0].clientY - touchPanelStartY;
+        // Only allow swipe from top area when content isn't scrollable
+        if (deltaY > 5 && touchPanelStartY < 80) {
+          panelIsSwiping = true;
+          modalPanel.style.transition = 'none';
+          modalPanel.style.transform = 'translateY(' + deltaY + 'px)';
+        }
+      }, { passive: true });
 
-    function setTheme(theme) {
-      document.documentElement.dataset.theme = theme;
-      themeIcon.innerHTML = theme === 'dark' ? SUN_ICON : MOON_ICON;
-      themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Светлая тема' : 'Тёмная тема');
-    }
+      modalPanel.addEventListener('touchend', function(e) {
+        if (!panelIsSwiping) return;
+        modalPanel.style.transition = '';
+        var endY = e.changedTouches ? e.changedTouches[0].clientY : 0;
+        if (endY - touchPanelStartY > 100) {
+          closeModal();
+        } else {
+          modalPanel.style.transform = '';
+        }
+        panelIsSwiping = false;
+      });
 
-    function applySavedTheme() {
-      const saved = localStorage.getItem('catalog-theme');
-      const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      setTheme(saved || preferred);
-    }
+      // Iframe load event
+      previewFrame.addEventListener('load', function() {
+        if (previewFrame.getAttribute('src')) {
+          loader.classList.add('is-hidden');
+        }
+      });
 
-    // Свайп вниз для закрытия модалки на мобильных
-    let touchStartY = 0;
-    let touchDeltaY = 0;
-    const modalPanel = modal.querySelector('.modal-panel');
+      // Fallback: hide loader after 5s even if load event doesn't fire
+      var loadTimer = null;
 
-    modal.querySelector('.modal-header').addEventListener('touchstart', (e) => {
-      touchStartY = e.touches[0].clientY;
-      touchDeltaY = 0;
-    }, { passive: true });
+      modalBackdrop.addEventListener('click', closeModal);
+      closeModalButton.addEventListener('click', closeModal);
 
-    modal.querySelector('.modal-header').addEventListener('touchmove', (e) => {
-      touchDeltaY = e.touches[0].clientY - touchStartY;
-      if (touchDeltaY > 0) {
-        modalPanel.style.transform = `translateY(${touchDeltaY}px)`;
-        modalPanel.style.transition = 'none';
-      }
-    }, { passive: true });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeModal();
+      });
 
-    modal.querySelector('.modal-header').addEventListener('touchend', () => {
-      modalPanel.style.transition = '';
-      if (touchDeltaY > 100) {
-        closeModal();
-      }
-      modalPanel.style.transform = '';
-    });
+      themeToggle.addEventListener('click', function() {
+        var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+        safeSetItem('catalog-theme', next);
+      });
 
-    previewFrame.addEventListener('load', () => {
-      if (previewFrame.getAttribute('src')) loader.classList.add('is-hidden');
-    });
-
-    modalBackdrop.addEventListener('click', closeModal);
-    closeModalButton.addEventListener('click', closeModal);
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeModal();
-    });
-
-    themeToggle.addEventListener('click', () => {
-      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-      setTheme(next);
-      localStorage.setItem('catalog-theme', next);
-    });
-
-    applySavedTheme();
-    loadFiles();
+      applySavedTheme();
+      loadFiles();
+    })();
   </script>
 </body>
 </html>
