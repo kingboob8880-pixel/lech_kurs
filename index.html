@@ -2,9 +2,14 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Каталог лечебных курсов | Лекарь Абу Мухаммад</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5">
+  <meta name="theme-color" content="#fffaf1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10100e" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+  <title>Лечебные курсы | Лекарь Абу Мухаммад</title>
   <style>
     :root {
       --bg: #f7f4ee;
@@ -12,13 +17,16 @@
       --text: #201913;
       --muted: #74695d;
       --line: rgba(73, 50, 31, 0.14);
-      --card: rgba(255, 255, 255, 0.72);
-      --card-strong: rgba(255, 255, 255, 0.92);
+      --card: #ffffff;
+      --card-strong: #ffffff;
       --accent: #b87932;
       --accent-2: #196b5d;
-      --shadow: 0 24px 70px rgba(52, 35, 18, 0.16);
-      --shadow-soft: 0 16px 44px rgba(52, 35, 18, 0.11);
-      --radius: 26px;
+      --shadow-soft: 0 8px 24px rgba(52, 35, 18, 0.08);
+      --radius: 20px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
     }
 
     [data-theme="dark"] {
@@ -26,86 +34,99 @@
       --bg-strong: #181713;
       --text: #f7efe2;
       --muted: #c6b8a7;
-      --line: rgba(255, 239, 216, 0.16);
-      --card: rgba(30, 28, 23, 0.74);
-      --card-strong: rgba(30, 28, 23, 0.96);
+      --line: rgba(255, 239, 216, 0.14);
+      --card: #1c1a17;
+      --card-strong: #221f1b;
       --accent: #e4a954;
       --accent-2: #58bca9;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
-      --shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.28);
+      --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.32);
     }
 
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html {
-      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       margin: 0;
       color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
       background:
-        radial-gradient(circle at top left, rgba(228, 169, 84, 0.28), transparent 32rem),
-        radial-gradient(circle at 86% 18%, rgba(25, 107, 93, 0.22), transparent 28rem),
-        linear-gradient(135deg, var(--bg), var(--bg-strong));
-      transition: background 260ms ease, color 260ms ease;
+        radial-gradient(circle at 100% 0%, rgba(228, 169, 84, 0.18), transparent 60%),
+        radial-gradient(circle at 0% 100%, rgba(25, 107, 93, 0.14), transparent 60%),
+        var(--bg);
+      transition: background 220ms ease, color 220ms ease;
       overflow-x: hidden;
-    }
-
-    body::before {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      content: "";
-      background-image:
-        linear-gradient(rgba(130, 98, 56, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(130, 98, 56, 0.07) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: linear-gradient(to bottom, black, transparent 78%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overscroll-behavior-y: contain;
     }
 
     button {
       font: inherit;
+      touch-action: manipulation;
     }
 
+    /* ===================== SHELL ===================== */
     .shell {
-      width: min(1180px, calc(100% - 32px));
+      width: 100%;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 28px 0 56px;
+      padding:
+        calc(14px + var(--safe-top))
+        calc(16px + var(--safe-right))
+        calc(24px + var(--safe-bottom))
+        calc(16px + var(--safe-left));
     }
 
+    /* ===================== TOPBAR ===================== */
     .topbar {
+      position: sticky;
+      top: calc(8px + var(--safe-top));
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      margin-bottom: clamp(34px, 6vw, 74px);
-      animation: slideDown 700ms ease both;
-    }
-
-    .brand-mark {
-      display: inline-grid;
-      width: 44px;
-      height: 44px;
-      place-items: center;
-      color: #fff7ea;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      border-radius: 16px;
-      box-shadow: 0 14px 28px rgba(184, 121, 50, 0.22);
+      gap: 12px;
+      margin-bottom: 22px;
+      padding: 10px 12px;
+      background: color-mix(in srgb, var(--bg-strong) 82%, transparent);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      animation: fadeDown 500ms ease both;
     }
 
     .brand-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
-      font-weight: 800;
-      letter-spacing: -0.03em;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-mark {
+      display: inline-grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      place-items: center;
+      color: #fff7ea;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 12px;
     }
 
     .brand-row span:last-child {
@@ -115,227 +136,223 @@
     }
 
     .theme-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 11px 14px;
+      display: inline-grid;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      place-items: center;
       color: var(--text);
       cursor: pointer;
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: 999px;
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
-      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      transition: transform 160ms ease, background 160ms ease;
     }
 
-    .theme-toggle:hover {
-      transform: translateY(-2px);
-      border-color: rgba(184, 121, 50, 0.38);
+    .theme-toggle:active {
+      transform: scale(0.94);
+      background: color-mix(in srgb, var(--accent) 14%, var(--card));
     }
 
+    /* ===================== HERO ===================== */
     .hero {
-      position: relative;
       display: grid;
-      gap: 28px;
-      margin-bottom: clamp(34px, 6vw, 72px);
-      animation: fadeUp 760ms ease 80ms both;
-    }
-
-    .hero::after {
-      position: absolute;
-      right: min(9vw, 90px);
-      bottom: -42px;
-      width: 220px;
-      height: 220px;
-      pointer-events: none;
-      content: "";
-      background: conic-gradient(from 120deg, transparent, rgba(184, 121, 50, 0.22), transparent, rgba(25, 107, 93, 0.22), transparent);
-      border-radius: 999px;
-      filter: blur(4px);
-      opacity: 0.85;
-      animation: slowSpin 18s linear infinite;
+      gap: 14px;
+      margin-bottom: 24px;
+      animation: fadeUp 500ms ease 60ms both;
     }
 
     .hero-kicker {
+      display: inline-block;
+      width: max-content;
+      padding: 6px 12px;
       color: var(--accent-2);
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.18em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
+      background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+      border-radius: 999px;
     }
 
     h1 {
-      max-width: 900px;
       margin: 0;
-      font-size: clamp(3rem, 9vw, 7.8rem);
-      line-height: 0.86;
-      letter-spacing: -0.085em;
+      font-size: clamp(1.7rem, 7.5vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
     }
 
-    .hero-copy {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 22px;
-      max-width: 980px;
-    }
-
-    .hero-copy p {
-      max-width: 650px;
+    .hero p {
       margin: 0;
       color: var(--muted);
-      font-size: clamp(1rem, 1.6vw, 1.24rem);
-      line-height: 1.7;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
     }
 
     .file-count {
-      flex: 0 0 auto;
-      padding: 13px 17px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
       color: var(--accent-2);
-      font-weight: 800;
-      border: 1px solid var(--line);
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: color-mix(in srgb, var(--accent-2) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent-2) 22%, transparent);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(12px);
     }
 
+    .file-count::before {
+      width: 6px;
+      height: 6px;
+      content: "";
+      background: var(--accent-2);
+      border-radius: 999px;
+    }
+
+    /* ===================== GRID & CARDS ===================== */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
-      gap: 18px;
+      gap: 12px;
+      grid-template-columns: 1fr;
     }
 
     .file-card {
       position: relative;
-      min-height: 230px;
-      padding: 24px;
-      overflow: hidden;
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "icon name action"
+        "icon path action";
+      column-gap: 14px;
+      row-gap: 2px;
+      align-items: center;
+      padding: 14px;
       color: var(--text);
+      text-align: left;
       cursor: pointer;
-      background: linear-gradient(145deg, var(--card-strong), var(--card));
+      background: var(--card-strong);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(18px);
-      transform: translateY(18px);
+      transform: translateY(8px);
       opacity: 0;
-      animation: cardIn 620ms ease forwards;
-      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+      animation: cardIn 380ms ease forwards;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
-    .file-card::before {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      content: "";
-      background: radial-gradient(circle at 18% 10%, rgba(228, 169, 84, 0.24), transparent 35%),
-        radial-gradient(circle at 92% 88%, rgba(25, 107, 93, 0.18), transparent 38%);
-      opacity: 0;
-      transition: opacity 220ms ease;
-    }
-
-    .file-card:hover,
-    .file-card:focus-within {
-      transform: translateY(-7px);
-      border-color: rgba(184, 121, 50, 0.42);
-      box-shadow: var(--shadow);
-    }
-
-    .file-card:hover::before,
-    .file-card:focus-within::before {
-      opacity: 1;
+    .file-card:active {
+      transform: translateY(0) scale(0.985);
+      border-color: color-mix(in srgb, var(--accent) 38%, var(--line));
+      background: color-mix(in srgb, var(--accent) 5%, var(--card-strong));
     }
 
     .file-icon {
-      position: relative;
+      grid-area: icon;
       display: grid;
-      width: 66px;
-      height: 76px;
-      margin-bottom: 28px;
+      width: 56px;
+      height: 56px;
       place-items: center;
       color: var(--accent-2);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.28));
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: 0 15px 34px rgba(25, 107, 93, 0.12);
-    }
-
-    [data-theme="dark"] .file-icon {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
-    }
-
-    .file-icon::after {
-      position: absolute;
-      top: -1px;
-      right: -1px;
-      width: 23px;
-      height: 23px;
-      content: "";
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(184, 121, 50, 0.3));
-      border-left: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      border-radius: 0 18px 0 12px;
+      background: color-mix(in srgb, var(--accent-2) 12%, var(--card));
+      border: 1px solid color-mix(in srgb, var(--accent-2) 22%, transparent);
+      border-radius: 16px;
     }
 
     .file-name {
-      position: relative;
-      min-height: 2.4em;
-      margin: 0 0 18px;
+      grid-area: name;
+      margin: 0;
+      overflow: hidden;
       overflow-wrap: anywhere;
-      font-size: 1.18rem;
-      font-weight: 850;
-      letter-spacing: -0.035em;
-      line-height: 1.2;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     .file-path {
-      position: relative;
-      margin: 0 0 24px;
+      grid-area: path;
+      margin: 0;
+      overflow: hidden;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.78rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .open-button {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      gap: 8px;
-      padding: 12px 16px;
-      color: #fffaf1;
-      font-weight: 800;
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      grid-area: action;
+      display: inline-grid;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      place-items: center;
+      color: var(--accent-2);
+      background: color-mix(in srgb, var(--accent-2) 14%, transparent);
       border: 0;
-      border-radius: 16px;
-      box-shadow: 0 14px 30px rgba(25, 107, 93, 0.18);
-      transition: transform 180ms ease, filter 180ms ease;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
     }
 
-    .open-button:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.05);
+    .file-card:active .open-button {
+      color: #fff;
+      background: var(--accent-2);
+      transform: translateX(2px);
     }
 
-    .empty-state {
-      padding: 38px;
+    /* Состояния */
+    .empty-state,
+    .error-state {
+      padding: 22px 18px;
       color: var(--muted);
+      font-size: 0.92rem;
       text-align: center;
       background: var(--card);
       border: 1px dashed var(--line);
       border-radius: var(--radius);
-      backdrop-filter: blur(12px);
     }
 
+    .skeleton {
+      display: grid;
+      gap: 12px;
+    }
+
+    .skeleton-card {
+      height: 86px;
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--card) 92%, transparent) 0%,
+        color-mix(in srgb, var(--accent) 8%, var(--card)) 50%,
+        color-mix(in srgb, var(--card) 92%, transparent) 100%);
+      background-size: 220% 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+
+    /* ===================== MODAL ===================== */
     .modal {
       position: fixed;
       inset: 0;
-      z-index: 50;
-      display: grid;
-      place-items: center;
-      padding: 5vh 5vw;
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
       pointer-events: none;
       opacity: 0;
       transition: opacity 220ms ease;
@@ -349,28 +366,27 @@
     .modal-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(13, 12, 10, 0.72);
-      backdrop-filter: blur(12px);
+      background: rgba(13, 12, 10, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
     }
 
     .modal-panel {
       position: relative;
       display: grid;
       grid-template-rows: auto 1fr;
-      width: 90vw;
-      height: 90vh;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
       overflow: hidden;
       background: var(--card-strong);
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      border-radius: 28px;
-      box-shadow: 0 34px 110px rgba(0, 0, 0, 0.46);
-      transform: translateY(24px) scale(0.96);
+      transform: translateY(24px);
       opacity: 0;
-      transition: transform 260ms ease, opacity 260ms ease;
+      transition: transform 280ms cubic-bezier(0.2, 0.9, 0.25, 1), opacity 220ms ease;
     }
 
     .modal.is-open .modal-panel {
-      transform: translateY(0) scale(1);
+      transform: translateY(0);
       opacity: 1;
     }
 
@@ -378,40 +394,63 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 10px;
       min-width: 0;
-      padding: 14px 14px 14px 20px;
+      padding:
+        calc(10px + var(--safe-top))
+        calc(10px + var(--safe-right))
+        10px
+        calc(14px + var(--safe-left));
+      background: var(--card-strong);
       border-bottom: 1px solid var(--line);
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .modal-title-icon {
+      display: inline-grid;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      place-items: center;
+      color: var(--accent-2);
+      background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+      border-radius: 10px;
     }
 
     .modal-title {
       min-width: 0;
       overflow: hidden;
-      font-weight: 850;
-      letter-spacing: -0.03em;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .close-button {
       display: inline-grid;
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       flex: 0 0 auto;
       place-items: center;
       color: var(--text);
       cursor: pointer;
-      background: transparent;
+      background: color-mix(in srgb, var(--text) 6%, transparent);
       border: 1px solid var(--line);
       border-radius: 999px;
-      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+      transition: transform 140ms ease, background 140ms ease;
     }
 
-    .close-button:hover {
-      transform: rotate(90deg);
-      border-color: rgba(184, 121, 50, 0.45);
-      background: rgba(184, 121, 50, 0.1);
+    .close-button:active {
+      transform: scale(0.92);
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
     }
 
     .preview-frame {
@@ -419,16 +458,20 @@
       height: 100%;
       background: #fff;
       border: 0;
+      padding-bottom: var(--safe-bottom);
     }
 
     .loader {
       position: absolute;
-      inset: 58px 0 0;
+      inset: 0;
+      top: calc(52px + var(--safe-top));
       display: grid;
       place-items: center;
+      gap: 10px;
       color: var(--muted);
+      font-size: 0.9rem;
       background: var(--card-strong);
-      transition: opacity 180ms ease, visibility 180ms ease;
+      transition: opacity 220ms ease, visibility 220ms ease;
     }
 
     .loader.is-hidden {
@@ -437,105 +480,94 @@
     }
 
     .loader::before {
-      width: 38px;
-      height: 38px;
-      margin-bottom: 10px;
+      width: 34px;
+      height: 34px;
       content: "";
-      border: 3px solid rgba(184, 121, 50, 0.18);
+      border: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
       border-top-color: var(--accent);
       border-radius: 999px;
       animation: spin 800ms linear infinite;
     }
 
-    .loader-inner {
-      display: grid;
-      place-items: center;
-    }
-
-    @keyframes slideDown {
-      from {
-        transform: translateY(-16px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+    /* ===================== ANIMATIONS ===================== */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes fadeUp {
-      from {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes cardIn {
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes slowSpin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
-    @media (max-width: 760px) {
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ===================== TABLET ===================== */
+    @media (min-width: 600px) {
       .shell {
-        width: min(100% - 22px, 1180px);
-        padding-top: 16px;
+        padding-top: calc(20px + var(--safe-top));
       }
 
-      .topbar {
-        margin-bottom: 42px;
-      }
-
-      .brand-row span:last-child {
-        max-width: 52vw;
-      }
-
-      .theme-toggle span {
-        display: none;
-      }
-
-      .hero-copy {
-        display: grid;
-        align-items: start;
-      }
-
-      .file-count {
-        width: max-content;
+      h1 {
+        font-size: clamp(2rem, 4vw, 2.6rem);
       }
 
       .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .file-card {
-        min-height: 210px;
+        grid-template-columns: repeat(2, 1fr);
       }
 
       .modal {
-        padding: 3vh 3vw;
+        align-items: center;
+        padding: 24px;
       }
 
       .modal-panel {
-        width: 94vw;
-        height: 92vh;
+        width: min(900px, 92vw);
+        height: min(820px, 92dvh);
         border-radius: 22px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+      }
+
+      .modal-header {
+        padding: 12px 14px;
+      }
+
+      .loader {
+        top: 60px;
+      }
+    }
+
+    /* ===================== DESKTOP ===================== */
+    @media (min-width: 960px) {
+      .shell {
+        max-width: 1000px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .file-card:hover {
+        transform: translateY(-2px);
+        border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+      }
+
+      .theme-toggle:hover,
+      .close-button:hover {
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
       }
     }
 
@@ -543,7 +575,6 @@
       *,
       *::before,
       *::after {
-        scroll-behavior: auto !important;
         animation-duration: 1ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 1ms !important;
@@ -556,7 +587,7 @@
     <header class="topbar" aria-label="Верхняя панель">
       <div class="brand-row" aria-label="Лекарь Абу Мухаммад">
         <span class="brand-mark" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 3.2C8.3 6.1 6.2 9 6.2 12.1C6.2 15.8 8.8 18.5 12 18.5C15.2 18.5 17.8 15.8 17.8 12.1C17.8 9 15.7 6.1 12 3.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
             <path d="M9.3 20.8H14.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             <path d="M12 9.1V14.3M9.4 11.7H14.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -566,27 +597,33 @@
       </div>
 
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 3V5.2M12 18.8V21M5.64 5.64L7.2 7.2M16.8 16.8L18.36 18.36M3 12H5.2M18.8 12H21M5.64 18.36L7.2 16.8M16.8 7.2L18.36 5.64" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M12 16.2C14.32 16.2 16.2 14.32 16.2 12C16.2 9.68 14.32 7.8 12 7.8C9.68 7.8 7.8 9.68 7.8 12C7.8 14.32 9.68 16.2 12 16.2Z" stroke="currentColor" stroke-width="1.8"/>
+        <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span>Тема</span>
       </button>
     </header>
 
     <section class="hero" aria-labelledby="pageTitle">
-      <div class="hero-kicker">Каталог лечебных курсов</div>
+      <span class="hero-kicker">Каталог лечебных курсов</span>
       <h1 id="pageTitle">Добро пожаловать в лечебные курсы Лекаря Абу Мухаммад</h1>
-      <div class="hero-copy">
-        <p>Выберите лечебный курс из списка ниже. Каждый HTML файл откроется в модальном окне с iframe, без перехода со страницы каталога.</p>
-        <div class="file-count" id="fileCount">0 файлов</div>
+      <p>Выберите курс из списка ниже — он откроется прямо здесь, без перехода со страницы.</p>
+      <div class="hero-meta">
+        <div class="file-count" id="fileCount">Загрузка...</div>
       </div>
     </section>
 
-    <section aria-label="Список HTML файлов">
-      <div class="grid" id="fileGrid"></div>
+    <section aria-label="Список лечебных курсов">
+      <div class="skeleton" id="skeleton">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+      <div class="grid" id="fileGrid" hidden></div>
       <div class="empty-state" id="emptyState" hidden>
-        Пока в репозитории нет HTML файлов кроме <strong>index.html</strong>. Загрузите их и обновите страницу.
+        Пока в репозитории нет HTML файлов кроме <strong>index.html</strong>. Загрузите курсы и обновите страницу.
+      </div>
+      <div class="error-state" id="errorState" hidden>
+        Не удалось загрузить список курсов. Проверьте подключение к интернету.
       </div>
     </section>
   </main>
@@ -595,17 +632,24 @@
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <section class="modal-panel" role="document">
       <header class="modal-header">
-        <div class="modal-title" id="modalTitle">Просмотр файла</div>
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 9.2L4.8 12L8 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 9.2L19.2 12L16 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.5 7.8L10.5 16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <div class="modal-title" id="modalTitle">Просмотр курса</div>
+        </div>
         <button class="close-button" id="closeModal" type="button" aria-label="Закрыть">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
       </header>
-      <iframe class="preview-frame" id="previewFrame" title="Предпросмотр HTML файла"></iframe>
-      <div class="loader" id="loader" aria-live="polite">
-        <div class="loader-inner">Загрузка страницы...</div>
-      </div>
+      <iframe class="preview-frame" id="previewFrame" title="Предпросмотр курса" loading="lazy"></iframe>
+      <div class="loader" id="loader" aria-live="polite">Загрузка курса...</div>
     </section>
   </div>
 
@@ -613,25 +657,18 @@
     // -----------------------------------------------------------------
     // КОНФИГУРАЦИЯ
     // -----------------------------------------------------------------
-    // Если сайт открыт на github.io — список .html файлов будет получен
-    // автоматически через GitHub API. При необходимости можно вручную
-    // указать репозиторий (owner/repo) и ветку.
-    // -----------------------------------------------------------------
     const CONFIG = {
-      // Например: 'username'. Если null — определится из URL.
-      owner: null,
-      // Например: 'my-repo'. Если null — определится из URL.
-      repo: null,
-      // Ветка по умолчанию. Если null — будет использована основная ветка.
-      branch: null,
-      // Резервный список файлов, если GitHub API недоступен (например,
-      // при локальном открытии или на кастомном домене без настройки).
-      fallbackFiles: []
+      owner: null,         // например 'username' (auto, если null)
+      repo: null,          // например 'my-repo' (auto, если null)
+      branch: null,        // например 'main' (использует default, если null)
+      fallbackFiles: []    // резерв, если GitHub API недоступен
     };
     // -----------------------------------------------------------------
 
     const fileGrid = document.getElementById('fileGrid');
+    const skeleton = document.getElementById('skeleton');
     const emptyState = document.getElementById('emptyState');
+    const errorState = document.getElementById('errorState');
     const fileCount = document.getElementById('fileCount');
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modalTitle');
@@ -640,6 +677,10 @@
     const previewFrame = document.getElementById('previewFrame');
     const loader = document.getElementById('loader');
     const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    const SUN_ICON = '<path d="M12 3V5.2M12 18.8V21M5.64 5.64L7.2 7.2M16.8 16.8L18.36 18.36M3 12H5.2M18.8 12H21M5.64 18.36L7.2 16.8M16.8 7.2L18.36 5.64" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/>';
+    const MOON_ICON = '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
 
     let lastFocusedElement = null;
     let visibleFiles = [];
@@ -647,37 +688,24 @@
     function detectRepo() {
       const host = location.hostname;
       const parts = location.pathname.split('/').filter(Boolean);
-
       let owner = CONFIG.owner;
       let repo = CONFIG.repo;
-
-      if (!owner && host.endsWith('.github.io')) {
-        owner = host.split('.')[0];
+      if (!owner && host.endsWith('.github.io')) owner = host.split('.')[0];
+      if (!repo && host.endsWith('.github.io')) {
+        repo = parts.length > 0 ? parts[0] : `${owner}.github.io`;
       }
-
-      if (!repo) {
-        if (host.endsWith('.github.io')) {
-          // username.github.io/repo/...  → repo = parts[0]
-          // username.github.io/          → repo = username.github.io
-          repo = parts.length > 0 ? parts[0] : `${owner}.github.io`;
-        }
-      }
-
       return owner && repo ? { owner, repo } : null;
     }
 
     function detectBasePath() {
-      // Базовая директория, в которой лежит index.html на сайте.
       const host = location.hostname;
       const parts = location.pathname.split('/').filter(Boolean);
-
       if (host.endsWith('.github.io') && parts.length > 0) {
         const last = parts[parts.length - 1];
         const isFile = /\.[a-z0-9]+$/i.test(last);
         const dirParts = isFile ? parts.slice(1, -1) : parts.slice(1);
         return dirParts.join('/');
       }
-
       return '';
     }
 
@@ -685,10 +713,10 @@
       const seen = new Set();
       return list
         .filter(Boolean)
-        .map((file) => String(file).trim())
-        .filter((file) => {
-          if (!file) return false;
-          const lower = file.toLowerCase();
+        .map((f) => String(f).trim())
+        .filter((f) => {
+          if (!f) return false;
+          const lower = f.toLowerCase();
           const name = lower.split('/').pop();
           if (!lower.endsWith('.html')) return false;
           if (name === 'index.html') return false;
@@ -702,167 +730,202 @@
     async function fetchFilesFromGitHub() {
       const target = detectRepo();
       if (!target) return null;
-
       const { owner, repo } = target;
       const basePath = detectBasePath();
       const branchPart = CONFIG.branch ? `?ref=${encodeURIComponent(CONFIG.branch)}` : '';
       const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${basePath}${branchPart}`;
-
-      const response = await fetch(apiUrl, {
-        headers: { Accept: 'application/vnd.github+json' }
-      });
-
-      if (!response.ok) {
-        throw new Error(`GitHub API: ${response.status}`);
-      }
-
+      const response = await fetch(apiUrl, { headers: { Accept: 'application/vnd.github+json' } });
+      if (!response.ok) throw new Error(`GitHub API: ${response.status}`);
       const data = await response.json();
       if (!Array.isArray(data)) return [];
-
       return data
         .filter((item) => item.type === 'file' && /\.html$/i.test(item.name))
         .map((item) => item.name);
     }
 
     async function loadFiles() {
-      fileCount.textContent = 'Загрузка...';
-
       try {
-        const remoteFiles = await fetchFilesFromGitHub();
-        if (remoteFiles) {
-          visibleFiles = normalizeFiles(remoteFiles);
+        const remote = await fetchFilesFromGitHub();
+        if (remote) {
+          visibleFiles = normalizeFiles(remote);
           renderFiles();
           return;
         }
       } catch (error) {
-        console.warn('Не удалось получить список файлов с GitHub:', error);
+        console.warn('GitHub API недоступен:', error);
       }
-
-      visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
-      renderFiles();
+      if (CONFIG.fallbackFiles && CONFIG.fallbackFiles.length) {
+        visibleFiles = normalizeFiles(CONFIG.fallbackFiles);
+        renderFiles();
+      } else {
+        skeleton.hidden = true;
+        errorState.hidden = false;
+        fileCount.textContent = '0 курсов';
+      }
     }
 
     function formatCount(count) {
-      const lastDigit = count % 10;
-      const lastTwoDigits = count % 100;
-
-      if (lastDigit === 1 && lastTwoDigits !== 11) {
-        return `${count} файл`;
-      }
-
-      if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14)) {
-        return `${count} файла`;
-      }
-
-      return `${count} файлов`;
+      const last = count % 10;
+      const last2 = count % 100;
+      if (last === 1 && last2 !== 11) return `${count} курс`;
+      if (last >= 2 && last <= 4 && (last2 < 12 || last2 > 14)) return `${count} курса`;
+      return `${count} курсов`;
     }
 
-    function createFileIcon() {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'file-icon';
-      wrapper.innerHTML = `
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    function createIconSVG() {
+      return `
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M8 9.2L4.8 12L8 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M16 9.2L19.2 12L16 14.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M13.5 7.8L10.5 16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       `;
-      return wrapper;
+    }
+
+    function createArrowSVG() {
+      return `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+    }
+
+    function prettifyName(file) {
+      const base = file.split('/').pop().replace(/\.html$/i, '');
+      return base.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim() || file;
     }
 
     function renderFiles() {
+      skeleton.hidden = true;
+      errorState.hidden = true;
       fileGrid.innerHTML = '';
       fileCount.textContent = formatCount(visibleFiles.length);
-      emptyState.hidden = visibleFiles.length > 0;
+
+      if (visibleFiles.length === 0) {
+        emptyState.hidden = false;
+        fileGrid.hidden = true;
+        return;
+      }
+
+      emptyState.hidden = true;
+      fileGrid.hidden = false;
+
+      const fragment = document.createDocumentFragment();
 
       visibleFiles.forEach((file, index) => {
-        const card = document.createElement('article');
+        const card = document.createElement('button');
+        card.type = 'button';
         card.className = 'file-card';
-        card.style.animationDelay = `${index * 70}ms`;
-        card.tabIndex = 0;
-        card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `Открыть ${file}`);
+        card.style.animationDelay = `${Math.min(index * 50, 400)}ms`;
+        card.setAttribute('aria-label', `Открыть курс ${prettifyName(file)}`);
 
-        const name = document.createElement('h2');
+        const icon = document.createElement('div');
+        icon.className = 'file-icon';
+        icon.innerHTML = createIconSVG();
+
+        const name = document.createElement('div');
         name.className = 'file-name';
-        name.textContent = file.split('/').pop();
+        name.textContent = prettifyName(file);
 
-        const path = document.createElement('p');
+        const path = document.createElement('div');
         path.className = 'file-path';
         path.textContent = file;
 
-        const button = document.createElement('button');
-        button.className = 'open-button';
-        button.type = 'button';
-        button.textContent = 'Открыть';
+        const action = document.createElement('span');
+        action.className = 'open-button';
+        action.setAttribute('aria-hidden', 'true');
+        action.innerHTML = createArrowSVG();
 
-        card.append(createFileIcon(), name, path, button);
-
+        card.append(icon, name, path, action);
         card.addEventListener('click', () => openModal(file));
-        card.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            openModal(file);
-          }
-        });
 
-        fileGrid.appendChild(card);
+        fragment.appendChild(card);
       });
+
+      fileGrid.appendChild(fragment);
     }
 
     function openModal(file) {
       lastFocusedElement = document.activeElement;
-      modalTitle.textContent = file;
+      modalTitle.textContent = prettifyName(file);
       loader.classList.remove('is-hidden');
       previewFrame.src = file;
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      closeModalButton.focus({ preventScroll: true });
+      // Не вызываем focus на iOS — иначе появляется клавиатура для iframe
+      if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        closeModalButton.focus({ preventScroll: true });
+      }
     }
 
     function closeModal() {
-      if (!modal.classList.contains('is-open')) {
-        return;
-      }
-
+      if (!modal.classList.contains('is-open')) return;
       modal.classList.remove('is-open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-
       window.setTimeout(() => {
         previewFrame.removeAttribute('src');
         loader.classList.remove('is-hidden');
       }, 260);
-
-      if (lastFocusedElement) {
+      if (lastFocusedElement && lastFocusedElement.focus) {
         lastFocusedElement.focus({ preventScroll: true });
       }
     }
 
-    function applySavedTheme() {
-      const savedTheme = localStorage.getItem('catalog-theme');
-      const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      document.documentElement.dataset.theme = savedTheme || preferredTheme;
+    function setTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      themeIcon.innerHTML = theme === 'dark' ? SUN_ICON : MOON_ICON;
+      themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Светлая тема' : 'Тёмная тема');
     }
 
+    function applySavedTheme() {
+      const saved = localStorage.getItem('catalog-theme');
+      const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      setTheme(saved || preferred);
+    }
+
+    // Свайп вниз для закрытия модалки на мобильных
+    let touchStartY = 0;
+    let touchDeltaY = 0;
+    const modalPanel = modal.querySelector('.modal-panel');
+
+    modal.querySelector('.modal-header').addEventListener('touchstart', (e) => {
+      touchStartY = e.touches[0].clientY;
+      touchDeltaY = 0;
+    }, { passive: true });
+
+    modal.querySelector('.modal-header').addEventListener('touchmove', (e) => {
+      touchDeltaY = e.touches[0].clientY - touchStartY;
+      if (touchDeltaY > 0) {
+        modalPanel.style.transform = `translateY(${touchDeltaY}px)`;
+        modalPanel.style.transition = 'none';
+      }
+    }, { passive: true });
+
+    modal.querySelector('.modal-header').addEventListener('touchend', () => {
+      modalPanel.style.transition = '';
+      if (touchDeltaY > 100) {
+        closeModal();
+      }
+      modalPanel.style.transform = '';
+    });
+
     previewFrame.addEventListener('load', () => {
-      loader.classList.add('is-hidden');
+      if (previewFrame.getAttribute('src')) loader.classList.add('is-hidden');
     });
 
     modalBackdrop.addEventListener('click', closeModal);
     closeModalButton.addEventListener('click', closeModal);
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeModal();
-      }
+      if (event.key === 'Escape') closeModal();
     });
 
     themeToggle.addEventListener('click', () => {
-      const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-      document.documentElement.dataset.theme = nextTheme;
-      localStorage.setItem('catalog-theme', nextTheme);
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+      localStorage.setItem('catalog-theme', next);
     });
 
     applySavedTheme();
