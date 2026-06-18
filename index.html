@@ -263,35 +263,29 @@
     /* ===================== GRID & CARDS ===================== */
     .grid {
       display: grid;
-      gap: 12px;
+      gap: 14px;
       grid-template-columns: 1fr;
     }
 
     .file-card {
       position: relative;
       display: grid;
-      grid-template-columns: 56px 1fr auto;
-      grid-template-rows: auto auto;
-      grid-template-areas:
-        "icon name action"
-        "icon path action";
-      column-gap: 14px;
-      row-gap: 2px;
-      align-items: center;
-      padding: 14px;
+      grid-template-rows: minmax(180px, 46vw) auto;
+      overflow: hidden;
       color: var(--text);
       text-align: left;
       cursor: pointer;
       background: var(--card-strong);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: calc(var(--radius) + 2px);
       box-shadow: var(--shadow-soft);
       transform: translateY(8px);
       opacity: 0;
       animation: cardIn 380ms ease forwards;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
       user-select: none;
       -webkit-user-select: none;
+      isolation: isolate;
     }
 
     .file-card:active {
@@ -300,20 +294,185 @@
       background: var(--card-active-bg);
     }
 
-    .file-icon {
-      grid-area: icon;
+    .card-preview {
+      position: relative;
+      min-height: 180px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)),
+        linear-gradient(135deg, rgba(184, 121, 50, 0.12), rgba(25, 107, 93, 0.08));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-preview-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      color: var(--text);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    [data-theme="dark"] .card-preview-badge {
+      background: rgba(24, 23, 19, 0.78);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .card-preview-badge::before {
+      width: 7px;
+      height: 7px;
+      content: "";
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+    }
+
+    .card-preview-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .card-preview-scale {
+      --preview-scale: 0.34;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100% / var(--preview-scale));
+      height: calc(100% / var(--preview-scale));
+      transform: scale(var(--preview-scale));
+      transform-origin: top left;
+      will-change: transform;
+    }
+
+    .card-preview-frame {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #fff;
+      pointer-events: none;
+    }
+
+    .card-preview-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(17, 17, 17, 0.08) 0%, rgba(17, 17, 17, 0) 36%, rgba(17, 17, 17, 0.22) 100%),
+        linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(255,255,255,0.12) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    [data-theme="dark"] .card-preview-overlay {
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 36%, rgba(0, 0, 0, 0.36) 100%),
+        linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(255,255,255,0.03) 100%);
+    }
+
+    .card-preview-loader {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    [data-theme="dark"] .card-preview-loader {
+      background: rgba(24, 23, 19, 0.78);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .card-preview-loader::before {
+      width: 14px;
+      height: 14px;
+      content: "";
+      border: 2px solid rgba(184, 121, 50, 0.24);
+      border-top-color: var(--accent);
+      border-radius: 999px;
+      animation: spin 900ms linear infinite;
+    }
+
+    .file-card.is-preview-ready .card-preview-loader {
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+    }
+
+    .file-card.is-preview-error .card-preview-loader {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .file-card.is-preview-error .card-preview-loader::before {
+      animation: none;
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+    }
+
+    .file-meta {
       display: grid;
-      width: 56px;
-      height: 56px;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+    }
+
+    .file-main {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .file-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
       place-items: center;
       color: var(--accent-2);
       background: var(--icon-bg);
       border: 1px solid var(--icon-border);
-      border-radius: 16px;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .file-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
     }
 
     .file-name {
-      grid-area: name;
       margin: 0;
       overflow: hidden;
       overflow-wrap: anywhere;
@@ -328,7 +487,6 @@
     }
 
     .file-path {
-      grid-area: path;
       margin: 0;
       overflow: hidden;
       color: var(--muted);
@@ -338,15 +496,15 @@
     }
 
     .open-button {
-      grid-area: action;
       display: inline-grid;
-      width: 38px;
-      height: 38px;
+      width: 42px;
+      height: 42px;
       flex: 0 0 auto;
       place-items: center;
       color: var(--accent-2);
       background: var(--arrow-bg);
       border-radius: 999px;
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
     }
 
     .file-card:active .open-button {
@@ -601,6 +759,14 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
+      .file-card {
+        grid-template-rows: 210px auto;
+      }
+
+      .card-preview-scale {
+        --preview-scale: 0.4;
+      }
+
       .modal {
         flex-direction: row;
         align-items: center;
@@ -639,17 +805,31 @@
       .grid {
         grid-template-columns: repeat(3, 1fr);
       }
+
+      .file-card {
+        grid-template-rows: 220px auto;
+      }
+
+      .card-preview-scale {
+        --preview-scale: 0.42;
+      }
     }
 
     @media (hover: hover) and (pointer: fine) {
       .file-card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-4px);
         border-color: var(--hover-border);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.12);
       }
 
+      .file-card:hover .card-preview-scale {
+        transform: scale(calc(var(--preview-scale) + 0.01));
+      }
+
+      .file-card:hover .open-button,
       .theme-toggle:hover,
-      .close-button:hover {
+      .close-button:hover,
+      .external-button:hover {
         background: var(--hover-bg);
       }
     }
@@ -885,22 +1065,30 @@
         var index = 0;
 
         function worker() {
-          while (index < fileObjects.length) {
-            var file = fileObjects[index++];
-            if (!file) continue;
-            var path = file.path;
-            tryFetchTitle(path).then(function(title) {
+          if (index >= fileObjects.length) {
+            return Promise.resolve();
+          }
+
+          var file = fileObjects[index++];
+          if (!file) {
+            return worker();
+          }
+
+          return tryFetchTitle(file.path)
+            .then(function(title) {
               file.title = title;
               file.loaded = true;
               updateCardTitle(file);
-            });
-          }
+            })
+            .then(worker);
         }
 
         var workers = Math.min(MAX_CONCURRENT, fileObjects.length);
+        var queue = [];
         for (var w = 0; w < workers; w++) {
-          worker();
+          queue.push(worker());
         }
+        return Promise.all(queue);
       }
 
       function tryFetchTitle(path) {
@@ -1013,6 +1201,90 @@
           '</svg>';
       }
 
+      var previewObserver = null;
+
+      function ensurePreviewObserver() {
+        if (previewObserver || !('IntersectionObserver' in window)) return;
+        previewObserver = new IntersectionObserver(function(entries) {
+          for (var i = 0; i < entries.length; i++) {
+            if (!entries[i].isIntersecting) continue;
+            var card = entries[i].target;
+            loadCardPreview(card);
+            previewObserver.unobserve(card);
+          }
+        }, {
+          rootMargin: '180px 0px'
+        });
+      }
+
+      function loadCardPreview(card) {
+        if (!card || !card._previewFrame || card._previewLoaded) return;
+        card._previewLoaded = true;
+        card._previewFrame.src = card._previewFrame.dataset.src;
+
+        card._previewTimeout = setTimeout(function() {
+          card.classList.add('is-preview-ready');
+        }, 5000);
+      }
+
+      function createPreviewBlock(file, displayName, card) {
+        var preview = document.createElement('div');
+        preview.className = 'card-preview';
+
+        var badge = document.createElement('div');
+        badge.className = 'card-preview-badge';
+        badge.textContent = 'Живое превью';
+
+        var stage = document.createElement('div');
+        stage.className = 'card-preview-stage';
+
+        var scale = document.createElement('div');
+        scale.className = 'card-preview-scale';
+
+        var frame = document.createElement('iframe');
+        frame.className = 'card-preview-frame';
+        frame.title = 'Мини-превью ' + displayName;
+        frame.setAttribute('aria-hidden', 'true');
+        frame.setAttribute('tabindex', '-1');
+        frame.setAttribute('loading', 'lazy');
+        frame.dataset.src = file.path;
+
+        frame.addEventListener('load', function() {
+          card.classList.add('is-preview-ready');
+          if (card._previewTimeout) {
+            clearTimeout(card._previewTimeout);
+            card._previewTimeout = null;
+          }
+        });
+
+        frame.addEventListener('error', function() {
+          card.classList.add('is-preview-error');
+          loaderBadge.textContent = 'Открыть курс';
+          if (card._previewTimeout) {
+            clearTimeout(card._previewTimeout);
+            card._previewTimeout = null;
+          }
+        });
+
+        scale.appendChild(frame);
+        stage.appendChild(scale);
+
+        var overlay = document.createElement('div');
+        overlay.className = 'card-preview-overlay';
+
+        var loaderBadge = document.createElement('div');
+        loaderBadge.className = 'card-preview-loader';
+        loaderBadge.textContent = 'Загружается';
+
+        preview.appendChild(stage);
+        preview.appendChild(overlay);
+        preview.appendChild(badge);
+        preview.appendChild(loaderBadge);
+
+        card._previewFrame = frame;
+        return preview;
+      }
+
       function renderFiles() {
         skeleton.hidden = true;
         errorState.hidden = true;
@@ -1027,6 +1299,7 @@
 
         emptyState.hidden = true;
         fileGrid.hidden = false;
+        ensurePreviewObserver();
 
         var fragment = document.createDocumentFragment();
 
@@ -1035,6 +1308,7 @@
           var card = document.createElement('article');
           card.className = 'file-card';
           card._filePath = file.path;
+          card._previewLoaded = false;
           card.style.animationDelay = Math.min(i * 50, 400) + 'ms';
           card.setAttribute('role', 'button');
           card.setAttribute('tabindex', '0');
@@ -1042,9 +1316,20 @@
           var displayName = file.title || prettifyName(file.path);
           card.setAttribute('aria-label', 'Открыть: ' + displayName);
 
+          var preview = createPreviewBlock(file, displayName, card);
+
+          var meta = document.createElement('div');
+          meta.className = 'file-meta';
+
+          var main = document.createElement('div');
+          main.className = 'file-main';
+
           var icon = document.createElement('div');
           icon.className = 'file-icon';
           icon.innerHTML = createIconSVG();
+
+          var copy = document.createElement('div');
+          copy.className = 'file-copy';
 
           var name = document.createElement('div');
           name.className = 'file-name';
@@ -1054,15 +1339,21 @@
           path.className = 'file-path';
           path.textContent = file.path;
 
+          copy.appendChild(name);
+          copy.appendChild(path);
+          main.appendChild(icon);
+          main.appendChild(copy);
+
           var action = document.createElement('span');
           action.className = 'open-button';
           action.setAttribute('aria-hidden', 'true');
           action.innerHTML = createArrowSVG();
 
-          card.appendChild(icon);
-          card.appendChild(name);
-          card.appendChild(path);
-          card.appendChild(action);
+          meta.appendChild(main);
+          meta.appendChild(action);
+
+          card.appendChild(preview);
+          card.appendChild(meta);
 
           (function(f) {
             card.addEventListener('click', function() { openModal(f); });
@@ -1078,6 +1369,15 @@
         }
 
         fileGrid.appendChild(fragment);
+
+        var cards = fileGrid.querySelectorAll('.file-card');
+        for (var j = 0; j < cards.length; j++) {
+          if (previewObserver) {
+            previewObserver.observe(cards[j]);
+          } else {
+            loadCardPreview(cards[j]);
+          }
+        }
       }
 
       // Update existing card when title is fetched
@@ -1090,6 +1390,9 @@
             if (nameEl && file.title) {
               nameEl.textContent = file.title;
               cards[i].setAttribute('aria-label', 'Открыть: ' + file.title);
+              if (cards[i]._previewFrame) {
+                cards[i]._previewFrame.title = 'Мини-превью ' + file.title;
+              }
             }
             return;
           }
