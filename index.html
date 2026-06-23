@@ -927,7 +927,15 @@
         owner: null,
         repo: null,
         branch: null,
-        fallbackFiles: []
+        // Запасной список — показывается, только если GitHub API недоступен
+        // (например, превышен лимит запросов). Можно дополнять вручную.
+        fallbackFiles: [
+          'ruqya.html',
+          'Krstreat.html',
+          'generator.html',
+          'ankets.html',
+          'Fix.html'
+        ]
       };
       // -----------------------------------------------------------------
 
@@ -1033,6 +1041,13 @@
         return pretty || path;
       }
 
+      // Имя текущей страницы (чтобы каталог не показывал сам себя)
+      var SELF_NAME = (function() {
+        var p = location.pathname.split('/').filter(function(x) { return x; }).pop() || '';
+        try { p = decodeURIComponent(p); } catch (e) {}
+        return p.toLowerCase();
+      })();
+
       function normalizeFiles(list) {
         var seen = {};
         return list
@@ -1044,6 +1059,7 @@
             var name = lower.split('/').pop();
             if (lower.slice(-5) !== '.html') return false;
             if (name === 'index.html') return false;
+            if (SELF_NAME && name === SELF_NAME) return false;
             if (seen[lower]) return false;
             seen[lower] = true;
             return true;
@@ -1106,31 +1122,87 @@
           });
       }
 
-      function fetchFilesFromGitHub() {
-        var target = detectRepo();
-        if (!target) return null;
-        var owner = target.owner;
-        var repo = target.repo;
-        var basePath = detectBasePath();
-        var branchPart = CONFIG.branch ? '?ref=' + encodeURIComponent(CONFIG.branch) : '';
-        var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + basePath + branchPart;
+      var GH_HEADERS = { Accept: 'application/vnd.github+json' };
 
-        return fetch(apiUrl, { headers: { Accept: 'application/vnd.github+json' } })
+      // Определяем рабочую ветку: заданную в CONFIG или ветку по умолчанию репозитория
+      function resolveBranch(owner, repo) {
+        if (CONFIG.branch) return Promise.resolve(CONFIG.branch);
+        return fetch('https://api.github.com/repos/' + owner + '/' + repo, { headers: GH_HEADERS })
           .then(function(response) {
-            if (!response.ok) throw new Error('GitHub API: ' + response.status);
+            if (!response.ok) throw new Error('repo ' + response.status);
+            return response.json();
+          })
+          .then(function(data) { return (data && data.default_branch) || 'main'; })
+          .catch(function() { return 'main'; });
+      }
+
+      // Рекурсивно получаем ВСЕ .html файлы из всего репозитория (включая подпапки)
+      function fetchTreeRecursive(owner, repo, basePath) {
+        return resolveBranch(owner, repo).then(function(branch) {
+          var treeUrl = 'https://api.github.com/repos/' + owner + '/' + repo +
+            '/git/trees/' + encodeURIComponent(branch) + '?recursive=1';
+          return fetch(treeUrl, { headers: GH_HEADERS })
+            .then(function(response) {
+              if (!response.ok) throw new Error('tree ' + response.status);
+              return response.json();
+            })
+            .then(function(data) {
+              if (!data || !Array.isArray(data.tree)) return null;
+              var prefix = basePath ? basePath.replace(/\/+$/, '') + '/' : '';
+              return data.tree
+                .filter(function(item) {
+                  return item.type === 'blob' && /\.html$/i.test(item.path);
+                })
+                .filter(function(item) {
+                  return prefix ? item.path.indexOf(prefix) === 0 : true;
+                })
+                // Ссылки делаем относительно расположения каталога
+                .map(function(item) {
+                  return prefix ? item.path.slice(prefix.length) : item.path;
+                });
+            });
+        });
+      }
+
+      // Запасной способ: список файлов только в корневой папке каталога
+      function fetchContentsAtBase(owner, repo, basePath) {
+        var branchPart = CONFIG.branch ? '?ref=' + encodeURIComponent(CONFIG.branch) : '';
+        var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo +
+          '/contents/' + basePath + branchPart;
+        return fetch(apiUrl, { headers: GH_HEADERS })
+          .then(function(response) {
+            if (!response.ok) throw new Error('contents ' + response.status);
             return response.json();
           })
           .then(function(data) {
-            if (!Array.isArray(data)) return [];
+            if (!Array.isArray(data)) return null;
             return data
               .filter(function(item) {
                 return item.type === 'file' && /\.html$/i.test(item.name);
               })
               .map(function(item) { return item.name; });
+          });
+      }
+
+      function fetchFilesFromGitHub() {
+        var target = detectRepo();
+        if (!target) return Promise.resolve(null);
+        var owner = target.owner;
+        var repo = target.repo;
+        var basePath = detectBasePath();
+
+        return fetchTreeRecursive(owner, repo, basePath)
+          .then(function(files) {
+            // Если дерево пустое/недоступно — пробуем содержимое корневой папки
+            if (files && files.length) return files;
+            return fetchContentsAtBase(owner, repo, basePath);
           })
           .catch(function(err) {
-            console.warn('GitHub API error:', err.message);
-            return null;
+            console.warn('GitHub tree error:', err.message);
+            return fetchContentsAtBase(owner, repo, basePath).catch(function(err2) {
+              console.warn('GitHub contents error:', err2.message);
+              return null;
+            });
           });
       }
 
